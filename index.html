@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Activities Discipline</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Daily Activities Tracker</h1>
+    <form id="activityForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        
+        <label for="activity">Activity:</label>
+        <input type="text" id="activity" name="activity" required>
+        
+        <label for="duration">Duration (hours):</label>
+        <input type="number" id="duration" name="duration" min="0" step="0.1" required>
+        
+        <button type="submit">Save Activity</button>
+    </form>
+
+    <button id="exportCSV">Export to CSV</button>
+    
+    <script src="script.js"></script>
+</body>
+</html>
