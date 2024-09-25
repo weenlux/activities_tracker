@@ -23,16 +23,45 @@ init_db()
 
 # Route to save activity
 @app.route("/save-activity", methods=["POST"])
+# API to save activity
+@app.route("/save-activity", methods=["POST"])
 def save_activity():
     data = request.json
-    conn = sqlite3.connect('activities.db')
+    date = data.get('date')
+    activity = data.get('activity')
+    duration = data.get('duration')
+
+    if not date or not activity or not duration:
+        return jsonify({"error": "Missing fields"}), 400
+
+    conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('INSERT INTO activities (date, activity, duration) VALUES (?, ?, ?)', 
-              (data['date'], data['activity'], data['duration']))
+              (date, activity, duration))
     conn.commit()
     conn.close()
-    return jsonify({"status": "success"}), 200
+    
+    return jsonify({"status": "Activity saved"}), 201
 
+# API to retrieve all activities
+@app.route("/get-activities", methods=["GET"])
+def get_activities():
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    c.execute('SELECT * FROM activities')
+    rows = c.fetchall()
+    conn.close()
+
+    activities = []
+    for row in rows:
+        activities.append({
+            "id": row[0],
+            "date": row[1],
+            "activity": row[2],
+            "duration": row[3]
+        })
+
+    return jsonify(activities)
 # Route to export data as CSV
 @app.route("/export-csv")
 def export_csv():
