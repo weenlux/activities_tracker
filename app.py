@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 import csv
 import sqlite3
+import os
 
 app = Flask(__name__)
 
@@ -21,27 +22,21 @@ def init_db():
 
 init_db()
 
-# Route to save activity
-@app.route("/save-activity", methods=["POST"])
-# API to save activity
+# Route to save activity data to the database
 @app.route("/save-activity", methods=["POST"])
 def save_activity():
     data = request.json
-    date = data.get('date')
-    activity = data.get('activity')
-    duration = data.get('duration')
-
-    if not date or not activity or not duration:
-        return jsonify({"error": "Missing fields"}), 400
-
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect('activities.db')
     c = conn.cursor()
+    
+    # Insert the activity data into the database
     c.execute('INSERT INTO activities (date, activity, duration) VALUES (?, ?, ?)', 
-              (date, activity, duration))
+              (data['date'], data['activity'], data['duration']))
+    
     conn.commit()
     conn.close()
     
-    return jsonify({"status": "Activity saved"}), 201
+    return jsonify({"status": "success"}), 200
 
 # API to retrieve all activities
 @app.route("/get-activities", methods=["GET"])
